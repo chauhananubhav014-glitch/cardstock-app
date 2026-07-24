@@ -302,6 +302,120 @@ const CATALOG = [
    dining:'None dedicated', fuel:'None',
    insurance:'Travel and purchase protection suite', forex:'3.25% markup', rewards:'Reward points on international spends, no cap',
    tags:['Lounge','No Fee']},
+  {id:'sbi-cashback', name:'Cashback SBI Card', issuer:'State Bank of India', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#243b55,#3a6073)',
+   joiningFee:'₹999', annualFee:'₹999 (waived on ₹2L spend)',
+   lounge:'None', movie:'None dedicated',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'5% cashback on all online spends (up to ₹5,000/month), 1% offline, no merchant restriction',
+   tags:['Cashback','No-frills']},
+  {id:'sbi-irctc-rupay', name:'IRCTC SBI RuPay', issuer:'State Bank of India', network:'RuPay', tier:'Co-branded', gradient:'linear-gradient(135deg,#1b3a2b,#2f6b45)',
+   joiningFee:'₹300', annualFee:'₹300 (waived on ₹1L spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'None',
+   insurance:'Rail travel insurance up to ₹10 lakh', forex:'Not applicable (domestic RuPay)', rewards:'10% value back as reward points on IRCTC ticket bookings',
+   tags:['Travel','RuPay','Co-branded']},
+  {id:'bpcl-sbi', name:'BPCL SBI Card', issuer:'State Bank of India', network:'RuPay', tier:'Entry-level', gradient:'linear-gradient(135deg,#3d1f1f,#6e3a3a)',
+   joiningFee:'₹1,499', annualFee:'₹1,499 (waived on ₹2L spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'13% value back as reward points at BPCL pumps, full surcharge waiver',
+   insurance:'None', forex:'Not applicable (domestic RuPay)', rewards:'13x at BPCL fuel, 5x on dining/grocery',
+   tags:['Fuel','RuPay','Cashback']},
+  {id:'kotak-811-rupay', name:'811 #DreamDifferent RuPay', issuer:'Kotak Mahindra Bank', network:'RuPay', tier:'Entry-level', gradient:'linear-gradient(135deg,#6b1f4a,#a83e6e)',
+   joiningFee:'Nil', annualFee:'Nil (lifetime free)',
+   lounge:'None', movie:'None',
+   dining:'4% cashback on dining and entertainment', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'Not applicable (domestic RuPay)', rewards:'2 points per ₹150, works with UPI scan-to-pay',
+   tags:['RuPay','No Fee','UPI']},
+  {id:'indusind-rupay-select', name:'RuPay Select', issuer:'IndusInd Bank', network:'RuPay', tier:'Premium', gradient:'linear-gradient(135deg,#2b2140,#4d3d78)',
+   joiningFee:'₹2,999', annualFee:'₹2,999 (waived on ₹3L spend)',
+   lounge:'8 domestic visits/year via the RuPay Select programme', movie:'None dedicated',
+   dining:'Up to 20% off at partner restaurants', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹1 crore', forex:'Not applicable (domestic RuPay)', rewards:'2 points per ₹150, UPI-linked rewards',
+   tags:['RuPay','Lounge','Premium']},
+  {id:'pnb-rupay-select', name:'RuPay Select', issuer:'Punjab National Bank', network:'RuPay', tier:'Premium', gradient:'linear-gradient(135deg,#402410,#6b4423)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹1L spend)',
+   lounge:'4 domestic visits/year via the RuPay Select programme', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'Personal accident cover', forex:'Not applicable (domestic RuPay)', rewards:'1 point per ₹100',
+   tags:['RuPay','Lounge','PSU Bank']},
+  {id:'union-rupay-select', name:'RuPay Select', issuer:'Union Bank of India', network:'RuPay', tier:'Entry-level', gradient:'linear-gradient(135deg,#123a5c,#1f6e9c)',
+   joiningFee:'Nil', annualFee:'₹500 (waived on ₹1L spend)',
+   lounge:'2 domestic visits/year', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'Not applicable (domestic RuPay)', rewards:'1 point per ₹200',
+   tags:['RuPay','PSU Bank']},
+  {id:'canara-visa-platinum', name:'Visa Platinum', issuer:'Canara Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#0e3a5c,#1c6ea3)',
+   joiningFee:'Nil', annualFee:'₹250',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver up to ₹500/month',
+   insurance:'Personal accident cover ₹2 lakh', forex:'3.5% markup', rewards:'1 point per ₹100',
+   tags:['Visa','PSU Bank','No-frills']},
+  {id:'bob-visa-platinum', name:'Visa Platinum', issuer:'Bank of Baroda', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#5c3a0e,#a3701c)',
+   joiningFee:'Nil', annualFee:'₹500 (waived on ₹75,000 spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'Personal accident cover ₹2 lakh', forex:'3.5% markup', rewards:'1 point per ₹100',
+   tags:['Visa','PSU Bank','No-frills']},
+  {id:'sc-platinum-rewards', name:'Platinum Rewards', issuer:'Standard Chartered', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#1e2a4a,#3a4d7a)',
+   joiningFee:'₹250', annualFee:'₹250 (waived on ₹30,000 spend)',
+   lounge:'None', movie:'None',
+   dining:'5x rewards on dining and groceries', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'5x points on dining, groceries and department stores',
+   tags:['Visa','Dining','Entry-level']},
+  {id:'rbl-shoprite', name:'ShopRite', issuer:'RBL Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#3a1e2a,#6e3a54)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹1.2L spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'Pick a 5x bonus category (dining/grocery/fuel/utility) each month',
+   tags:['Visa','Cashback']},
+  {id:'flipkart-axis', name:'Flipkart Axis Bank', issuer:'Axis Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#2874f0,#0a3a8a)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹2L spend)',
+   lounge:'4 domestic visits/year', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'5% back on Flipkart & preferred partners, 4% on Swiggy/PVR/Uber etc.',
+   tags:['Cashback','Online Shopping','Lounge']},
+  {id:'indianoil-hdfc', name:'IndianOil HDFC Bank', issuer:'HDFC Bank', network:'RuPay', tier:'Entry-level', gradient:'linear-gradient(135deg,#7a3b12,#c9691f)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹50,000 spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'5% value back as reward points at IndianOil outlets, full surcharge waiver',
+   insurance:'None', forex:'Not applicable (domestic RuPay)', rewards:'5x at fuel/grocery, 1x on other spends',
+   tags:['Fuel','RuPay','Cashback']},
+  {id:'swiggy-hdfc', name:'Swiggy HDFC Bank', issuer:'HDFC Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#fc8019,#c95c00)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹2L spend)',
+   lounge:'8 domestic visits/year (min. quarterly spend)', movie:'None',
+   dining:'10% unlimited cashback on Swiggy (food, Instamart, Dineout)', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'5% cashback on Swiggy, 1% on other spends',
+   tags:['Dining','Cashback','Lounge']},
+  {id:'hdfc-diners-black', name:'Diners Club Black', issuer:'HDFC Bank', network:'Diners Club', tier:'Super-premium', gradient:'linear-gradient(135deg,#0a0a0a,#2b2b2b)',
+   joiningFee:'₹10,000', annualFee:'₹10,000 (waived on ₹8L spend)',
+   lounge:'Unlimited domestic + international via Priority Pass, plus golf', movie:'Buy-1-get-1 up to ₹750, twice a month',
+   dining:'Up to 25% off via Swiggy Dineout & EazyDiner Prime', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹5 crore, comprehensive travel cover', forex:'2% markup', rewards:'5 points per ₹150, 10x on weekend dining',
+   tags:['Lounge','Movies','Golf','Super-premium']},
+  {id:'yes-first-preferred', name:'First Preferred', issuer:'Yes Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#1a1a2e,#3a3a6e)',
+   joiningFee:'₹199', annualFee:'₹199 (waived on ₹60,000 spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'1x base rate, up to 4x on select bonus categories',
+   tags:['Visa','Entry-level']},
+  {id:'au-zenith', name:'Zenith', issuer:'AU Small Finance Bank', network:'Visa', tier:'Premium', gradient:'linear-gradient(135deg,#3a1e5c,#6e3a9c)',
+   joiningFee:'₹4,999', annualFee:'₹4,999',
+   lounge:'12 domestic + 6 international visits/year', movie:'Buy-1-get-1 up to ₹300, twice a month',
+   dining:'Up to 20% off via EazyDiner', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹1 crore', forex:'2% markup', rewards:'5 points per ₹200, up to 10x on dining/travel',
+   tags:['Lounge','Movies','Premium']},
+  {id:'sc-easemytrip', name:'EaseMyTrip Credit Card', issuer:'Standard Chartered', network:'Mastercard', tier:'Entry-level', gradient:'linear-gradient(135deg,#0d4d3a,#1c8a66)',
+   joiningFee:'₹999', annualFee:'₹999 (waived on ₹1.2L spend)',
+   lounge:'4 domestic visits/year', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'Travel insurance on EaseMyTrip bookings', forex:'3.5% markup', rewards:'20% discount on EaseMyTrip flight/hotel bookings',
+   tags:['Travel','Lounge','Mastercard']},
+  {id:'hsbc-cashback', name:'Cashback Card', issuer:'HSBC', network:'Mastercard', tier:'Entry-level', gradient:'linear-gradient(135deg,#8a1a1a,#c93a3a)',
+   joiningFee:'Nil', annualFee:'₹999 (waived on ₹200,000 spend)',
+   lounge:'None', movie:'None',
+   dining:'1.5% flat cashback on all spends', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'1.5% uncapped cashback, credited monthly',
+   tags:['Cashback','Mastercard']},
 ];
 
 // ---- state ----
@@ -309,6 +423,8 @@ let wallet = [];
 let compareSelection = [];
 let searchTerm = '';
 let benefitFilter = 'all';
+let networkFilter = 'all';
+const NETWORKS = ['Visa','Mastercard','RuPay','Amex','Diners Club'];
 
 const el = (sel) => document.querySelector(sel);
 const elAll = (sel) => document.querySelectorAll(sel);
@@ -412,7 +528,8 @@ function filteredCatalog(){
   return CATALOG.filter(c=>{
     const matchesSearch = (c.name+' '+c.issuer).toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = benefitFilter==='all' ? true : c.tags.some(t=>t.toLowerCase()===benefitFilter);
-    return matchesSearch && matchesFilter;
+    const matchesNetwork = networkFilter==='all' ? true : c.network.toLowerCase().includes(networkFilter.toLowerCase());
+    return matchesSearch && matchesFilter && matchesNetwork;
   });
 }
 
@@ -435,7 +552,7 @@ function renderExplore(){
         <div class="issuer">${c.issuer}</div>
         <div class="cardname">${c.name}</div>
       </div>
-      <div class="tags">${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="tags"><span class="tag" style="border-color:var(--gold);color:var(--gold-soft);">${c.network}</span>${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
       <div class="fee-row"><span>Annual fee</span><span>${c.annualFee}</span></div>
       <div class="fee-row"><span>Lounge</span><span style="max-width:150px;text-align:right;">${c.lounge}</span></div>
       <div class="actions">
@@ -451,18 +568,24 @@ function renderExplore(){
   root.innerHTML = `
     <div class="explore-controls">
       <input class="search-box" placeholder="Search by card or bank name…" value="${searchTerm}" oninput="onSearch(this.value)">
+      <select class="filter" onchange="onNetworkFilter(this.value)">
+        <option value="all">All networks</option>
+        ${NETWORKS.map(n=>`<option value="${n}" ${networkFilter===n?'selected':''}>${n}</option>`).join('')}
+      </select>
       <select class="filter" onchange="onFilter(this.value)">
         <option value="all">All benefits</option>
         ${allTags.map(t=>`<option value="${t.toLowerCase()}" ${benefitFilter===t.toLowerCase()?'selected':''}>${t}</option>`).join('')}
       </select>
     </div>
     ${compareBar}
+    <div style="color:var(--slate);font-size:12px;margin-bottom:12px;">${filteredCatalog().length} of ${CATALOG.length} cards</div>
     <div class="catalog-grid">${grid || '<div style="color:var(--slate);padding:20px;">No cards match that search.</div>'}</div>
   `;
 }
 
 function onSearch(v){ searchTerm=v; renderExplore(); }
 function onFilter(v){ benefitFilter=v; renderExplore(); }
+function onNetworkFilter(v){ networkFilter=v; renderExplore(); }
 
 function toggleCompare(id, checked){
   if(checked){
@@ -526,7 +649,7 @@ function showCompare(){
 // expose functions used inline
 window.addToWallet=addToWallet; window.removeFromWallet=removeFromWallet;
 window.switchTab=switchTab; window.scrollToBenefit=scrollToBenefit;
-window.onSearch=onSearch; window.onFilter=onFilter; window.toggleCompare=toggleCompare;
+window.onSearch=onSearch; window.onFilter=onFilter; window.onNetworkFilter=onNetworkFilter; window.toggleCompare=toggleCompare;
 window.openDetail=openDetail; window.closeModal=closeModal; window.showCompare=showCompare;
 
 loadWallet();
