@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cardstock</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#12151c">
+<meta name="description" content="Track your credit cards and their benefits, and compare cards you don't have yet.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  :root{
+    --ink:#12151c;
+    --ink-soft:#1b1f29;
+    --paper:#f6f4ef;
+    --gold:#c9a227;
+    --gold-soft:#e2c766;
+    --teal:#2e6f6b;
+    --coral:#d1495b;
+    --slate:#8b93a7;
+    --slate-dim:#5b6273;
+    --line: rgba(255,255,255,0.08);
+    --line-soft: rgba(18,21,28,0.1);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height:100vh;
+  }
+  @font-face{font-family:'Space Grotesk';src:local('Space Grotesk');}
+  .app{max-width:1040px;margin:0 auto;padding:28px 20px 80px;}
+
+  /* header */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:38px;height:26px;border-radius:6px;
+    background:linear-gradient(135deg,var(--gold) 0%, #8a6d16 60%, var(--ink) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+    position:relative;
+  }
+  .brand-mark::after{
+    content:"";position:absolute;left:5px;top:9px;width:14px;height:2px;background:rgba(0,0,0,0.35);border-radius:2px;
+  }
+  .brand h1{
+    font-family:'Space Grotesk','IBM Plex Sans',sans-serif;
+    font-size:20px;letter-spacing:0.01em;margin:0;font-weight:600;
+  }
+  .brand span{color:var(--slate);font-size:12px;display:block;letter-spacing:0.04em;text-transform:uppercase;}
+
+  .tabs{display:flex;gap:4px;background:var(--ink-soft);padding:4px;border-radius:999px;border:1px solid var(--line);}
+  .tab{
+    padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;
+    color:var(--slate);transition:all .2s ease;user-select:none;letter-spacing:0.01em;
+  }
+  .tab.active{background:var(--gold);color:var(--ink);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* empty state */
+  .empty{
+    border:1px dashed var(--line);border-radius:var(--radius);padding:56px 24px;text-align:center;color:var(--slate);
+  }
+  .empty h3{color:var(--paper);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin:0 0 8px;}
+  .empty button{margin-top:16px;}
+
+  /* wallet fan */
+  .wallet-fan{position:relative;min-height:210px;margin-bottom:6px;}
+  .fan-card{
+    position:absolute;top:0;width:300px;height:180px;border-radius:14px;padding:18px 20px;
+    cursor:pointer;transition:transform .25s ease, box-shadow .25s ease, z-index 0s;
+    box-shadow:0 10px 24px rgba(0,0,0,0.35);
+    display:flex;flex-direction:column;justify-content:space-between;
+    border:1px solid rgba(255,255,255,0.12);
+    color:#fff;
+  }
+  .fan-card:hover{transform: translateY(-10px) scale(1.02) !important; box-shadow:0 18px 32px rgba(0,0,0,0.5);}
+  .fan-card .row1{display:flex;justify-content:space-between;align-items:flex-start;}
+  .fan-card .issuer{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;}
+  .fan-card .cardname{font-family:'Space Grotesk',sans-serif;font-size:16.5px;font-weight:600;margin-top:2px;}
+  .fan-card .chip{width:30px;height:22px;border-radius:4px;background:linear-gradient(135deg,#e9d38a,#a9862c);}
+  .fan-card .num{font-family:'IBM Plex Mono',monospace;letter-spacing:0.12em;font-size:13px;opacity:0.85;}
+  .fan-card .net{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.75;align-self:flex-end;}
+
+  .wallet-list{margin-top:24px;display:flex;flex-direction:column;gap:14px;}
+
+  /* benefit card (expanded) */
+  .benefit-panel{
+    background:var(--ink-soft);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;
+  }
+  .bp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;}
+  .bp-head h3{font-family:'Space Grotesk',sans-serif;margin:0;font-size:17px;font-weight:600;}
+  .bp-head .meta{color:var(--slate);font-size:12.5px;margin-top:3px;}
+  .remove-btn{
+    background:transparent;border:1px solid var(--line);color:var(--slate);
+    border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;white-space:nowrap;
+  }
+  .remove-btn:hover{border-color:var(--coral);color:var(--coral);}
+
+  .benefit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+  .benefit-item{
+    background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  }
+  .benefit-item .k{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold-soft);margin-bottom:4px;font-weight:600;}
+  .benefit-item .v{font-size:13.5px;line-height:1.45;color:#e9e7e0;}
+
+  /* explore */
+  .explore-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+  .search-box{
+    flex:1;min-width:200px;background:var(--ink-soft);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;color:var(--paper);font-size:14px;
+  }
+  .search-box::placeholder{color:var(--slate-dim);}
+  select.filter{
+    background:var(--ink-soft);border:1px solid var(--line);color:var(--paper);
+    border-radius:10px;padding:10px 14px;font-size:13.5px;
+  }
+  .compare-bar{
+    display:flex;align-items:center;gap:10px;background:var(--ink-soft);border:1px solid var(--gold);
+    border-radius:12px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:var(--gold-soft);
+  }
+  .compare-bar button{margin-left:auto;}
+
+  .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+  .cat-card{
+    background:var(--ink-soft);border:1px solid var(--line);border-radius:14px;padding:16px;
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .cat-card .swatch{
+    height:70px;border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;
+  }
+  .cat-card .swatch .issuer{font-size:10.5px;text-transform:uppercase;letter-spacing:0.07em;opacity:0.85;}
+  .cat-card .swatch .cardname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;}
+  .cat-card .tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-size:10.5px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:var(--slate);border:1px solid var(--line);}
+  .cat-card .fee-row{font-size:12px;color:var(--slate);display:flex;justify-content:space-between;}
+  .cat-card .actions{display:flex;gap:8px;margin-top:auto;}
+  .btn{
+    border:none;border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:600;cursor:pointer;
+    transition:opacity .15s ease;
+  }
+  .btn:hover{opacity:0.85;}
+  .btn-primary{background:var(--gold);color:var(--ink);flex:1;}
+  .btn-secondary{background:transparent;border:1px solid var(--line);color:var(--paper);flex:1;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--slate);}
+  .btn-added{background:transparent;border:1px solid var(--teal);color:var(--teal);flex:1;cursor:default;}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .cmp-check{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--slate);}
+  .cmp-check input{accent-color:var(--gold);}
+
+  /* modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:flex-start;justify-content:center;
+    padding:40px 16px;overflow-y:auto;z-index:50;
+  }
+  .overlay.active{display:flex;}
+  .modal{
+    background:var(--ink-soft);border:1px solid var(--line);border-radius:var(--radius);max-width:640px;width:100%;
+    padding:26px;position:relative;
+  }
+  .modal-close{
+    position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--slate);font-size:20px;cursor:pointer;
+  }
+
+  /* compare table */
+  .compare-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;}
+  table.compare{width:100%;border-collapse:collapse;font-size:13px;}
+  table.compare th, table.compare td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.compare th{color:var(--gold-soft);font-family:'Space Grotesk',sans-serif;font-weight:600;background:var(--ink-soft);position:sticky;top:0;}
+  table.compare td.label{color:var(--slate);font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+
+  .disclaimer{
+    margin-top:30px;font-size:12px;color:var(--slate-dim);line-height:1.6;border-top:1px solid var(--line);padding-top:16px;
+  }
+
+  @media (max-width:600px){
+    .fan-card{position:relative !important;width:100%;transform:none !important;margin-bottom:12px;}
+    .wallet-fan{display:flex;flex-direction:column;min-height:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <h1>Cardstock</h1>
+        <span>your wallet, decoded</span>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="wallet">My Wallet</div>
+      <div class="tab" data-tab="explore">Explore &amp; Compare</div>
+    </div>
+  </div>
+
+  <div class="view active" id="view-wallet"></div>
+  <div class="view" id="view-explore"></div>
+
+  <div class="disclaimer">
+    Benefit details shown are representative samples for illustration and can change or vary by card variant, city, and bank policy — always confirm exact terms on the issuer's official site or your card's T&amp;C document before relying on them for a purchase decision.
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const CATALOG = [
+  {id:'hdfc-regalia', name:'Regalia Gold', issuer:'HDFC Bank', network:'Visa/Mastercard', tier:'Premium', gradient:'linear-gradient(135deg,#2c2f57,#4a4e8f)',
+   joiningFee:'₹2,500', annualFee:'₹2,500 (waived on ₹4L spend)',
+   lounge:'12 domestic + 6 international visits/year via Priority Pass', movie:'Buy-1-get-1 on BookMyShow, up to ₹500, twice a month',
+   dining:'Up to 20% off at 2,000+ partner restaurants (Swiggy Dineout)', fuel:'1% surcharge waiver, ₹250–₹1,000 spend',
+   insurance:'Air accident cover ₹1 crore, lost card liability cover', forex:'2% markup', rewards:'4 points per ₹150; up to 20x on select brands',
+   tags:['Lounge','Movies','Dining']},
+  {id:'hdfc-millennia', name:'Millennia', issuer:'HDFC Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#3a3a3a,#6b6b6b)',
+   joiningFee:'₹1,000', annualFee:'₹1,000 (waived on ₹1L spend)',
+   lounge:'8 domestic visits/year (min. quarterly spend ₹15,000)', movie:'No dedicated ticket offer',
+   dining:'5% cashback on Swiggy, Zomato, BigBasket', fuel:'1% surcharge waiver up to ₹250/month',
+   insurance:'None disclosed', forex:'3.5% markup', rewards:'5% cashback on preferred online merchants',
+   tags:['Cashback','Lounge']},
+  {id:'icici-amazon-pay', name:'Amazon Pay ICICI', issuer:'ICICI Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#232f3e,#37475a)',
+   joiningFee:'Nil', annualFee:'Nil (lifetime free)',
+   lounge:'None', movie:'None',
+   dining:'1% cashback on all other spends', fuel:'1% cashback (no surcharge waiver)',
+   insurance:'None', forex:'3.5% markup', rewards:'5% back for Prime members on Amazon, 2% for non-Prime',
+   tags:['Cashback','No Fee']},
+  {id:'icici-sapphiro', name:'Sapphiro', issuer:'ICICI Bank', network:'Visa/Mastercard', tier:'Premium', gradient:'linear-gradient(135deg,#0f3d3e,#1c6b6d)',
+   joiningFee:'₹6,500', annualFee:'₹3,500',
+   lounge:'Unlimited domestic + 2 international/quarter via Priority Pass', movie:'Buy-1-get-1 up to ₹200 on select platforms',
+   dining:'Culinary Treats programme, up to 15% off', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹1 crore, purchase protection', forex:'3.5% markup', rewards:'2 points per ₹100, up to 10x on dining/travel',
+   tags:['Lounge','Dining','Premium']},
+  {id:'sbi-elite', name:'SBI Card Elite', issuer:'State Bank of India', network:'Visa/Mastercard', tier:'Premium', gradient:'linear-gradient(135deg,#5b1010,#8a2323)',
+   joiningFee:'₹4,999', annualFee:'₹4,999 (waived on ₹10L spend)',
+   lounge:'6 domestic + 6 international visits/year', movie:'Buy-1-get-1 up to ₹250, twice a month on BookMyShow',
+   dining:'Complimentary Club Marriott membership (1 year)', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹1 crore, credit shield ₹1 lakh', forex:'3.5% markup', rewards:'2 points per ₹100, 5x on dining/movies/departmental stores',
+   tags:['Lounge','Movies','Premium']},
+  {id:'sbi-simplyclick', name:'SimplyCLICK', issuer:'State Bank of India', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#4a4a4a,#7a7a7a)',
+   joiningFee:'₹499', annualFee:'₹499 (waived on ₹1L spend)',
+   lounge:'None', movie:'None',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'10x points on Amazon, BookMyShow, Cleartrip and more',
+   tags:['Online Shopping','No-frills']},
+  {id:'axis-magnus', name:'Magnus', issuer:'Axis Bank', network:'Burgundy/Visa Infinite', tier:'Super-premium', gradient:'linear-gradient(135deg,#1a1a1a,#3d2b1f)',
+   joiningFee:'₹12,500', annualFee:'₹12,500 (waived on ₹25L spend)',
+   lounge:'Unlimited domestic + international via Priority Pass, plus golf', movie:'None dedicated, but high reward value on entertainment spends',
+   dining:'EazyDiner Prime membership, up to 25% off', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹3 crore, travel insurance suite', forex:'2% markup', rewards:'12 points per ₹200, 25x on travel portal bookings',
+   tags:['Lounge','Golf','Super-premium']},
+  {id:'axis-ace', name:'ACE', issuer:'Axis Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#7b1e1e,#a83e3e)',
+   joiningFee:'₹499', annualFee:'₹499 (waived on ₹2L spend)',
+   lounge:'4 domestic visits/year (min. quarterly spend ₹10,000)', movie:'None dedicated',
+   dining:'4% cashback on Swiggy, Zomato, Ola', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'2% flat cashback on all UPI/bill payments',
+   tags:['Cashback','Lounge']},
+  {id:'amex-platinum-travel', name:'Platinum Travel', issuer:'American Express', network:'Amex', tier:'Premium', gradient:'linear-gradient(135deg,#1f3a5f,#3a6ea5)',
+   joiningFee:'₹3,500', annualFee:'₹3,500',
+   lounge:'8 domestic visits/year via Priority Pass', movie:'None dedicated',
+   dining:'Amex Selects dining discounts up to 20%', fuel:'None (surcharge waiver not offered)',
+   insurance:'Purchase protection, travel inconvenience cover', forex:'3.5% markup', rewards:'1 point per ₹50, bonus points on flight bookings',
+   tags:['Lounge','Travel']},
+  {id:'amex-gold', name:'Membership Rewards Gold', issuer:'American Express', network:'Amex', tier:'Entry-level', gradient:'linear-gradient(135deg,#7a6620,#c9a227)',
+   joiningFee:'₹1,000', annualFee:'₹4,500 (from year 2)',
+   lounge:'None', movie:'None dedicated',
+   dining:'Amex Selects discounts at partner restaurants', fuel:'None',
+   insurance:'None', forex:'3.5% markup', rewards:'1 point per ₹50, gift vouchers on milestone spends',
+   tags:['Rewards','Entry-level']},
+  {id:'kotak-league', name:'League Platinum', issuer:'Kotak Mahindra Bank', network:'Visa', tier:'Entry-level', gradient:'linear-gradient(135deg,#7a1f1f,#c0392b)',
+   joiningFee:'₹500', annualFee:'₹500 (waived on ₹50,000 spend)',
+   lounge:'2 domestic visits/year', movie:'20% off up to ₹100 on select platforms',
+   dining:'None dedicated', fuel:'1% surcharge waiver',
+   insurance:'None', forex:'3.5% markup', rewards:'4 points per ₹150',
+   tags:['Movies','Lounge']},
+  {id:'idfc-wealth', name:'Wealth', issuer:'IDFC FIRST Bank', network:'Visa', tier:'Premium', gradient:'linear-gradient(135deg,#0d2b1f,#1f5c3f)',
+   joiningFee:'Nil', annualFee:'Nil (lifetime free)',
+   lounge:'Unlimited domestic + international via Priority Pass', movie:'Buy-1-get-1 up to ₹150 on select platforms',
+   dining:'Up to 20% off via EazyDiner', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover, fraud liability cover', forex:'1.5% markup', rewards:'6x rewards on the first ₹20,000 monthly spend',
+   tags:['Lounge','No Fee','Low Forex']},
+  {id:'yes-marquee', name:'Marquee', issuer:'Yes Bank', network:'Visa Signature', tier:'Super-premium', gradient:'linear-gradient(135deg,#241b0e,#5c4324)',
+   joiningFee:'₹9,999 (waived first year on approval)', annualFee:'₹9,999',
+   lounge:'Unlimited domestic + international via Priority Pass, plus golf', movie:'None dedicated',
+   dining:'Culinary partner discounts up to 20%', fuel:'1% surcharge waiver',
+   insurance:'Air accident cover ₹1 crore, travel insurance', forex:'2% markup', rewards:'12 points per ₹200, redeemable at 1:1 for miles',
+   tags:['Lounge','Golf','Super-premium']},
+  {id:'hsbc-premier', name:'Premier Mastercard', issuer:'HSBC', network:'Mastercard World', tier:'Premium', gradient:'linear-gradient(135deg,#5c1a1a,#8a2e2e)',
+   joiningFee:'Nil (HSBC Premier account holders)', annualFee:'Nil',
+   lounge:'Unlimited domestic + international via Priority Pass', movie:'None dedicated',
+   dining:'None dedicated', fuel:'None',
+   insurance:'Travel and purchase protection suite', forex:'3.25% markup', rewards:'Reward points on international spends, no cap',
+   tags:['Lounge','No Fee']},
+];
+
+// ---- state ----
+let wallet = [];
+let compareSelection = [];
+let searchTerm = '';
+let benefitFilter = 'all';
+
+const el = (sel) => document.querySelector(sel);
+const elAll = (sel) => document.querySelectorAll(sel);
+
+async function loadWallet(){
+  try{
+    const raw = localStorage.getItem('cardstock_wallet_card_ids');
+    wallet = raw ? JSON.parse(raw) : [];
+  }catch(e){ wallet = []; }
+  renderWallet();
+  renderExplore();
+}
+
+async function saveWallet(){
+  try{ localStorage.setItem('cardstock_wallet_card_ids', JSON.stringify(wallet)); }catch(e){ console.error(e); }
+}
+
+function addToWallet(id){
+  if(!wallet.includes(id)){ wallet.push(id); saveWallet(); renderWallet(); renderExplore(); }
+}
+function removeFromWallet(id){
+  wallet = wallet.filter(x=>x!==id); saveWallet(); renderWallet(); renderExplore();
+}
+
+function cardById(id){ return CATALOG.find(c=>c.id===id); }
+
+function benefitGrid(c){
+  const items = [
+    ['Lounge access', c.lounge],
+    ['Movies', c.movie],
+    ['Dining', c.dining],
+    ['Fuel', c.fuel],
+    ['Insurance & protection', c.insurance],
+    ['Forex markup', c.forex],
+    ['Rewards', c.rewards],
+  ];
+  return `<div class="benefit-grid">` + items.map(([k,v])=>`
+    <div class="benefit-item"><div class="k">${k}</div><div class="v">${v}</div></div>
+  `).join('') + `</div>`;
+}
+
+function renderWallet(){
+  const root = el('#view-wallet');
+  if(wallet.length===0){
+    root.innerHTML = `
+      <div class="empty">
+        <h3>Your wallet is empty</h3>
+        <div>Add the cards you actually hold and see every perk — lounge visits, movie offers, insurance and more — in one place.</div>
+        <button class="btn btn-primary" onclick="switchTab('explore')" style="padding:10px 22px;">Browse cards to add</button>
+      </div>`;
+    return;
+  }
+  const fanHtml = wallet.map((id,i)=>{
+    const c = cardById(id);
+    const offset = i*46;
+    const z = i;
+    return `<div class="fan-card" style="left:${offset}px;z-index:${z};background:${c.gradient}" onclick="scrollToBenefit('${c.id}')">
+      <div class="row1">
+        <div><div class="issuer">${c.issuer}</div><div class="cardname">${c.name}</div></div>
+        <div class="chip"></div>
+      </div>
+      <div class="num">•••• •••• •••• ••••</div>
+      <div class="net">${c.network}</div>
+    </div>`;
+  }).join('');
+
+  const listHtml = wallet.map(id=>{
+    const c = cardById(id);
+    return `<div class="benefit-panel" id="panel-${c.id}">
+      <div class="bp-head">
+        <div>
+          <h3>${c.name} <span style="color:var(--slate);font-weight:400;font-size:13px;">— ${c.issuer}</span></h3>
+          <div class="meta">Annual fee: ${c.annualFee} · Joining fee: ${c.joiningFee}</div>
+        </div>
+        <button class="remove-btn" onclick="removeFromWallet('${c.id}')">Remove</button>
+      </div>
+      ${benefitGrid(c)}
+    </div>`;
+  }).join('');
+
+  root.innerHTML = `
+    <div class="wallet-fan" style="width:${300 + (wallet.length-1)*46}px;">${fanHtml}</div>
+    <div class="wallet-list">${listHtml}</div>
+  `;
+}
+
+function scrollToBenefit(id){
+  const p = el('#panel-'+id);
+  if(p) p.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function switchTab(name){
+  elAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  elAll('.view').forEach(v=>v.classList.remove('active'));
+  el('#view-'+name).classList.add('active');
+}
+
+elAll('.tab').forEach(t=>t.addEventListener('click', ()=>switchTab(t.dataset.tab)));
+
+function filteredCatalog(){
+  return CATALOG.filter(c=>{
+    const matchesSearch = (c.name+' '+c.issuer).toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = benefitFilter==='all' ? true : c.tags.some(t=>t.toLowerCase()===benefitFilter);
+    return matchesSearch && matchesFilter;
+  });
+}
+
+function renderExplore(){
+  const root = el('#view-explore');
+  const allTags = [...new Set(CATALOG.flatMap(c=>c.tags))].sort();
+
+  const compareBar = compareSelection.length>0 ? `
+    <div class="compare-bar">
+      <span>${compareSelection.length} card${compareSelection.length>1?'s':''} selected to compare</span>
+      <button class="btn btn-ghost" onclick="compareSelection=[];renderExplore();">Clear</button>
+      <button class="btn btn-primary" ${compareSelection.length<2?'disabled':''} onclick="showCompare()">Compare</button>
+    </div>` : '';
+
+  const grid = filteredCatalog().map(c=>{
+    const inWallet = wallet.includes(c.id);
+    const checked = compareSelection.includes(c.id) ? 'checked' : '';
+    return `<div class="cat-card">
+      <div class="swatch" style="background:${c.gradient}">
+        <div class="issuer">${c.issuer}</div>
+        <div class="cardname">${c.name}</div>
+      </div>
+      <div class="tags">${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="fee-row"><span>Annual fee</span><span>${c.annualFee}</span></div>
+      <div class="fee-row"><span>Lounge</span><span style="max-width:150px;text-align:right;">${c.lounge}</span></div>
+      <div class="actions">
+        ${inWallet
+          ? `<button class="btn btn-added" disabled>✓ In wallet</button>`
+          : `<button class="btn btn-primary" onclick="addToWallet('${c.id}')">Add to wallet</button>`}
+        <button class="btn btn-secondary" onclick="openDetail('${c.id}')">Details</button>
+      </div>
+      <label class="cmp-check"><input type="checkbox" ${checked} onchange="toggleCompare('${c.id}', this.checked)"> Add to compare</label>
+    </div>`;
+  }).join('');
+
+  root.innerHTML = `
+    <div class="explore-controls">
+      <input class="search-box" placeholder="Search by card or bank name…" value="${searchTerm}" oninput="onSearch(this.value)">
+      <select class="filter" onchange="onFilter(this.value)">
+        <option value="all">All benefits</option>
+        ${allTags.map(t=>`<option value="${t.toLowerCase()}" ${benefitFilter===t.toLowerCase()?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    ${compareBar}
+    <div class="catalog-grid">${grid || '<div style="color:var(--slate);padding:20px;">No cards match that search.</div>'}</div>
+  `;
+}
+
+function onSearch(v){ searchTerm=v; renderExplore(); }
+function onFilter(v){ benefitFilter=v; renderExplore(); }
+
+function toggleCompare(id, checked){
+  if(checked){
+    if(compareSelection.length>=3){ alert('You can compare up to 3 cards at a time.'); renderExplore(); return; }
+    compareSelection.push(id);
+  } else {
+    compareSelection = compareSelection.filter(x=>x!==id);
+  }
+  renderExplore();
+}
+
+function openDetail(id){
+  const c = cardById(id);
+  const inWallet = wallet.includes(id);
+  el('#modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3 style="font-family:'Space Grotesk',sans-serif;margin:0 0 4px;font-size:19px;">${c.name}</h3>
+    <div style="color:var(--slate);font-size:13px;margin-bottom:16px;">${c.issuer} · ${c.network} · Annual fee ${c.annualFee}</div>
+    ${benefitGrid(c)}
+    <div style="margin-top:18px;">
+      ${inWallet
+        ? `<button class="btn btn-added" style="width:100%;" disabled>✓ Already in your wallet</button>`
+        : `<button class="btn btn-primary" style="width:100%;" onclick="addToWallet('${c.id}');closeModal();">Add to wallet</button>`}
+    </div>
+  `;
+  el('#overlay').classList.add('active');
+}
+function closeModal(){ el('#overlay').classList.remove('active'); }
+el('#overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
+
+function showCompare(){
+  const cards = compareSelection.map(cardById);
+  const rows = [
+    ['Issuer', c=>c.issuer],
+    ['Network', c=>c.network],
+    ['Joining fee', c=>c.joiningFee],
+    ['Annual fee', c=>c.annualFee],
+    ['Lounge access', c=>c.lounge],
+    ['Movies', c=>c.movie],
+    ['Dining', c=>c.dining],
+    ['Fuel', c=>c.fuel],
+    ['Insurance', c=>c.insurance],
+    ['Forex markup', c=>c.forex],
+    ['Rewards', c=>c.rewards],
+  ];
+  el('#modalContent').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3 style="font-family:'Space Grotesk',sans-serif;margin:0 0 16px;font-size:19px;">Comparing ${cards.length} cards</h3>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead><tr><th></th>${cards.map(c=>`<th>${c.name}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${rows.map(([label, fn])=>`<tr><td class="label">${label}</td>${cards.map(c=>`<td>${fn(c)}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  el('#overlay').classList.add('active');
+}
+
+// expose functions used inline
+window.addToWallet=addToWallet; window.removeFromWallet=removeFromWallet;
+window.switchTab=switchTab; window.scrollToBenefit=scrollToBenefit;
+window.onSearch=onSearch; window.onFilter=onFilter; window.toggleCompare=toggleCompare;
+window.openDetail=openDetail; window.closeModal=closeModal; window.showCompare=showCompare;
+
+loadWallet();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(err=>console.warn('SW registration failed', err));
+  });
+}
+</script>
+</body>
+</html>
